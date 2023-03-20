@@ -27,6 +27,8 @@ module.exports = {
       "2x1": "1400px",
     },
     colors: {
+      white: "#ffffff",
+      black: "#000000",
       blue: "#0071dc",
       lightBlue: "#e6f1fc",
       yellow: "#ffc220",
