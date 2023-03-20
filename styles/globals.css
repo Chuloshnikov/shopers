@@ -8,4 +8,7 @@
     .navBarHover {
         @apply h-12 px-5 text-[#ffffff] rounded-full flex items-center gap-2 hover:bg-hoverBg duration-300 cursor-pointer;
     }
+    .bottomNavLi {
+        @apply hover:underline underline-offset-2 cursor-pointer decoration-[1px] duration-200;
+    }
 }
