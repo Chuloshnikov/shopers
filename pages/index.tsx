@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Navbar from '../components/Navbar';
 import Banner from '../components/Banner';
 import { Product } from '../type';
+import Products from '../components/Products';
 
 
 interface Props {
@@ -22,6 +23,7 @@ export default function Home({ productData }:Props) {
         <div className='max-w-contentContainer mx-auto bg-white'>
           <Navbar/>
           <Banner/>
+          <Products productData={productData}/>
         </div>
       </main>
     </>
@@ -35,7 +37,6 @@ export const getServerSideProps = async () => {
   const productData = await (
       await fetch("http://localhost:3000/api/productdata")
       ).json();
-
       return {
         props: { productData },
       }
