@@ -23,13 +23,9 @@ export default function Home({ productData }:Props) {
       </Head>
       <main className='bg-lightBlue '>
         <div className='max-w-contentContainer mx-auto bg-white'>
-          <Navbar/>
           <Banner/>
           <Products productData={productData}/>
-         
         </div>
-          <TopFooter/>
-          <Footer/>
       </main>
     </>
   )
