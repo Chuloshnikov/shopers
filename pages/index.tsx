@@ -1,9 +1,15 @@
 import Head from 'next/head';
 import Navbar from '../components/Navbar';
 import Banner from '../components/Banner';
+import { Product } from '../type';
 
 
-export default function Home() {
+interface Props {
+  productData: Product
+}
+
+
+export default function Home({ productData }:Props) {
   return (
     <>
       <Head>
@@ -21,3 +27,16 @@ export default function Home() {
     </>
   )
 }
+
+
+//------------------------------SSR DATA FETCHING START--------------------------------------//
+
+export const getServerSideProps = async () => {
+  const productData = await (
+      await fetch("http://localhost:3000/api/productdata")
+      ).json();
+
+      return {
+        props: { productData },
+      }
+    };
