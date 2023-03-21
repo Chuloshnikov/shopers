@@ -4,6 +4,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { AiOutlineHeart, AiOutlineUser } from 'react-icons/ai';
 import { BsCart2 } from 'react-icons/bs';
 import NavbarBottom from './NavbarBottom';
+import Link from 'next/link';
 
 const Navbar = () => {
   return (
@@ -11,9 +12,11 @@ const Navbar = () => {
             <div className='w-full h-full border-b-[1px] border-b-[#ffffff]'>
                 <div className='max-w-container mx-auto h-20 px-4 flex items-center justify-between gap-2'>
                     {/*Logo start*/}
-                    <div className='navBarHover'>
+                    <Link href="/">
+                        <div className='navBarHover'>
                         <Image src={logo} className="w-44"alt="logo"/>
-                    </div>
+                        </div>
+                    </Link>
                     {/*Logo end*/}
                     {/*Departments start*/}
                     <div className='navBarHover'>
@@ -71,6 +74,7 @@ const Navbar = () => {
                     </div>
                     {/*Accounts end*/}
                     {/*Cart start*/}
+                   <Link href="/cart">
                     <div className='flex flex-col justify-center items-center gap-2 
                         h-12 px-5 rounded-full bg-transparent hover:bg-hoverBg duration-300 relative'
                         >
@@ -82,6 +86,7 @@ const Navbar = () => {
                         0
                         </span>
                     </div>
+                   </Link>
                     {/*Cart end*/}
                  
                 </div>
