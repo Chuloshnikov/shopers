@@ -1,7 +1,11 @@
+import CartPage from "../components/CartPage";
+
 
 const cart = () => {
   return (
-    <div>cart</div>
+    <div className="max-w-contentContainer mx-auto">
+      <CartPage/>
+    </div>
   )
 }
 
