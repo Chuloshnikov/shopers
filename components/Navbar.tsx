@@ -6,12 +6,28 @@ import { AiOutlineHeart, AiOutlineUser } from 'react-icons/ai';
 import { BsCart2 } from 'react-icons/bs';
 import NavbarBottom from './NavbarBottom';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSession, signIn, signOut } from "next-auth/react";
+import { addUser, removeUser } from '../redux/shopperSlice';
 
 const Navbar = () => {
+    const { data: session } = useSession();
+    const dispatch = useDispatch();
     const productData = useSelector((state:any) => state.shopper.productData);
     const [totalAmt, setTotalAmt] = useState("");
+
+    useEffect(() => {
+        if(session) {
+            dispatch(addUser({
+                name: session.user?.name,
+                email: session.user?.email,
+                image: session.user?.image,
+                })
+            );
+        } else {
+            dispatch(removeUser())
+        }
+    }, [session, dispatch])
 
     useEffect(() => {
         let price = 0;
