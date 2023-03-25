@@ -48,7 +48,7 @@ export const shopperslice = createSlice({
                 item!.quantity--;
             }
         },
-        deleteItem: (store, action) => {
+        deleteItem: (state, action) => {
             state.productData = state.productData.filter(
                 (item) => item._id !== action.payload
             );
