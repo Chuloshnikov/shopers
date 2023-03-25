@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -15,12 +15,36 @@ import { MdOutlineAdd } from 'react-icons/md';
 import { IoMdClose } from 'react-icons/io';
 import { StoreProduct } from '../type';
 import { isTemplateMiddle } from 'typescript';
+import FormatePrice from './FormatePrice';
+import { deleteItem, resetCart, minusQuantity, plusQuantity } from '../redux/shopperSlice';
 
 
 
 const CartPage = () => {
+    const dispatch = useDispatch();
     const productData = useSelector((state: any) => state.shopper.productData);
-    console.log(productData)
+    const [warningMsg, setWarningMsg] = useState(false);
+    // Price
+    const [totalOldPrice, setTotalOldPrice] = useState();
+    const [totalSavings, setTotalSavings] = useState();
+    const [totalAmt, setTotalAmt] = useState();
+
+    useEffect(() => {
+        setWarningMsg(true);
+        let oldPrice = 0;
+        let savings = 0;
+        let amt = 0;
+        productData.map((item:StoreProduct) => {
+            oldPrice += item.oldPrice * item.quantity;
+            savings += item.oldPrice - item.price;
+            amt += item.price * item.quantity;
+            return 
+        });
+        setTotalOldPrice(oldPrice);
+        setTotalSavings(savings);
+        setTotalAmt(amt);
+    }, [productData])
+    
   return (
     <div className='w-full py-10'>
         <div className='w-full flex gap-10'>
@@ -96,6 +120,7 @@ const CartPage = () => {
                                                 </p>
                                                 <div className='mt-2 flex items-center gap-6'>
                                                     <button
+                                                    onClick={() => dispatch(deleteItem(item._id))}
                                                     className='text-sm underline underline-offset-2 decoration-[1px] text-[#676363]
                                                     hover:no-underline hover:text-blue duration-300'
                                                     >
@@ -107,6 +132,17 @@ const CartPage = () => {
                                                         justify-between px-3'
                                                         >
                                                         <button
+                                                            onClick={() => dispatch(minusQuantity({
+                                                                _id: item._id,
+                                                                title: item.title,
+                                                                oldPrice: item.oldPrice,
+                                                                price: item.price,
+                                                                description: item.description,
+                                                                brand: item.brand,
+                                                                category: item.category,
+                                                                image: item.image,
+                                                                quantity: 1,
+                                                            }))}
                                                             className='text-base w-5 h-5 text-[#6f6b6b] hover:bg-[#74767c] hover:text-white
                                                             rounded-full flex items-center justify-center cursor-pointer duration-200'
                                                         >
@@ -114,6 +150,17 @@ const CartPage = () => {
                                                         </button>
                                                             <span>{item.quantity}</span>
                                                             <button
+                                                            onClick={() => dispatch(plusQuantity({
+                                                                _id: item._id,
+                                                                title: item.title,
+                                                                oldPrice: item.oldPrice,
+                                                                price: item.price,
+                                                                description: item.description,
+                                                                brand: item.brand,
+                                                                category: item.category,
+                                                                image: item.image,
+                                                                quantity: 1,
+                                                            }))}
                                                             className='text-base w-5 h-5 text-[#6f6b6b] hover:bg-[#74767c] hover:text-white
                                                             rounded-full flex items-center justify-center cursor-pointer duration-200'
                                                             >
@@ -126,15 +173,121 @@ const CartPage = () => {
                                            
                                         </div>
                                         <div className='w-1/4 text-right flex flex-col items-end gap-1'>
-                                            <p>{item.price}</p>
+                                            <p
+                                            className='font-semibold text-xl text-[#2a8703]'
+                                            >
+                                                <FormatePrice amount={item.price * item.quantity}/>
+                                            </p>
+                                            <p
+                                            className='text-sm line-through text-[#7c7878]'
+                                            >
+                                                <FormatePrice amount={item.oldPrice * item.quantity}/>
+                                            </p>
+                                            <div className='flex items-center text-xs gap-2'>
+                                                <p className='bg-[#c6efd2] text-[8px] uppercase px-2 py-[1px]'>You save</p>
+                                                <p className='text-[#2a8703] font-semibold'>
+                                                    <FormatePrice
+                                                    amount = {
+                                                        item.price * item.quantity - item.oldPrice * item.quantity
+                                                    }
+                                                    
+                                                    />
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
+                            <button onClick={() => dispatch(resetCart())}
+                             className='w-44 bg-[#F44336] text-white h-10 rounded-full text-base font-semibold 
+                            hover:bg-[#C62828] duration-300'
+                            >
+                                Reset Cart
+                            </button>
                         </div>
             </div>
-            <div className='w-2/3 p-4 mt-24 h-[500px] border-[1px] border-[#8D8586] rounded-md flex flex-col justify-center gap-4'>
-
+            <div className='w-2/3 p-4 mt-24 h-[500px] border-[1px] border-[#8D8586] 
+            rounded-md flex flex-col justify-center gap-4'
+            >
+            <div className='w-full flex flex-col gap-4 border-b-[1px] border-b-[#b5afb0] pb-4'>
+                <button className='bg-blue hover:bg-hoverBg w-full text-white
+                    h-10 rounded-full font-semibold duration-300'
+                    >
+                        Continue to checkout
+                 </button>
+                 <p className='text-sm text-center text-[#F44336] -mt-4 font-semibold'
+                 >
+                        Please sign for checkout
+                 </p>
+                 {
+                    warningMsg && (
+                    <div className='bg-[#002d58] text-white p-2 rounded-lg flex items-center justify-between gap-4'>
+                        <Image className='w-8' src={warningImg} alt="warningImg"/>
+                        <p className='text-sm'>
+                            Items in your cart have reduced prices. Check out now for extra savings!
+                        </p>
+                        <IoMdClose 
+                        onClick={() => setWarningMsg(false)}
+                        className='text-3xl hover:text-[#de5147] cursor-pointer duration-200'
+                        />
+                    </div>
+                 )}
+                 <p className='text-sm text-center'>
+                        For the best shopping experience,{" "}
+                        <span className='underline underline-offset-2 decoration-[1px] cursor-pointer'>
+                            sign in
+                        </span>
+                 </p>
+            </div>
+                    {/* checkout price */}
+                    <div className='w-full flex flex-col gap-4 border-b-[1px] border-b-[#b5afb0] pb-4'>
+                        <div className='flex flex-col gap-1'>
+                            <div className='text-sm flex justify-between'>
+                                <p className='font-semibold'>Subtotal 
+                                    <span>
+                                    ({productData.length} items)
+                                    </span>
+                                </p>
+                                <p className='line-trough text-[#8D8586] text-base'>
+                                    <FormatePrice amount={totalOldPrice}/>
+                                </p>
+                            </div>
+                            <div className='text-sm flex justify-between'>
+                                <p className='font-semibold'>
+                                    Savings
+                                </p>
+                                <p className='text-[#2a8703] font-bold bg-[#c6efd2] py-1 px-[2px]'>
+                                    -<FormatePrice amount={totalSavings}/>
+                                </p>
+                            </div>
+                            <div className='text-sm flex justify-between'>
+                                <p className='font-semibold'>
+                                    Total Amount
+                                </p>
+                                <p className='text-[#565151] font-normal text-base'>
+                                    <FormatePrice amount={totalAmt}/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='w-full flex flex-col gap-4 border-b-[1px] border-b-[#b5afb0] pb-4'>
+                        <div className='flex flex-col gap-1'>
+                            <div className='text-sm flex justify-between'>
+                                <p>Shipping</p>
+                                <p className='text-[#2a8703]'>Free</p>
+                            </div>
+                            <div className='text-sm flex justify-between'>
+                                <p className='font-semibold'>Texes</p>
+                                <p className='text-[#565151]'>Calculated at checkout</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='text-sm flex justify-between'>
+                            <p>Estimated total</p>
+                            <p className='text-[#565151] font-bold text-lg'>
+                                <FormatePrice amount={totalAmt}/>
+                            </p>
+                        </div>
             </div>
         </div>
     </div>
